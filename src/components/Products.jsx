@@ -1,25 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { addCart } from "../redux/action";
 
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-
 import toast from "react-hot-toast";
-
 
 // adicionado a importação
 import ProductCard from "../components/ProductCard";
-
-
-
 
 const Products = () => {
   const [data, setData] = useState([]);
   const [filter, setFilter] = useState(data);
   const [loading, setLoading] = useState(false);
-  let componentMounted = true;
+
+  // CORREÇÃO: Usando useRef para a lógica de montagem do componente
+  const componentMounted = useRef(true);
 
   const dispatch = useDispatch();
 
@@ -31,19 +28,19 @@ const Products = () => {
     const getProducts = async () => {
       setLoading(true);
       const response = await fetch("https://fakestoreapi.com/products/");
-      if (componentMounted) {
+      if (componentMounted.current) { // CORREÇÃO: Acessando o valor com .current
         setData(await response.clone().json());
         setFilter(await response.json());
         setLoading(false);
       }
-
-      return () => {
-        componentMounted = false;
-      };
     };
 
     getProducts();
-  }, []);
+
+    return () => {
+      componentMounted.current = false; // CORREÇÃO: Atualizando o valor com .current
+    };
+  }, []); // A dependência é um array vazio, então o useEffect só roda uma vez
 
   const Loading = () => {
     return (
@@ -131,10 +128,10 @@ const Products = () => {
             />
           </div>
         ))}
-
       </>
     );
   };
+
   return (
     <>
       <div className="container my-3 py-3">
