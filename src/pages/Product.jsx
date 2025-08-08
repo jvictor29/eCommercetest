@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import Marquee from "react-fast-marquee";
 import { useDispatch } from "react-redux";
 import { addCart } from "../redux/action";
-import ProductCard from "../components/ProductCard";
+
 
 import { Footer, Navbar } from "../components";
 
